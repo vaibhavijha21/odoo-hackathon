@@ -12,7 +12,21 @@ const posts = [
     description: "Bin not cleared for 3 days",
     lat: 30.3752, // Ambala
     lng: 76.7821
-  },
+  },{
+  title: "Garbage dumped ",
+    description: "Somebody threw a pile of junk near my house in phase 4",
+    image:"yay.avif",
+    lat: 30.3752, // Ambala
+    lng: 76.7821
+},
+{
+  title: "Pothole near sector 70",
+    description: "Huge pothole on main road",
+    image:"waterlogged.avif",
+    lat: 30.3752, // Ambala
+    lng: 76.7821
+},
+
   {
     title: "Pothole near Phase 7",
     description: "Huge pothole on main road",

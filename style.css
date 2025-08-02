@@ -66,10 +66,12 @@ h1{
 } */
  button {
   background-color: green;
+  justify-content: end;
   color: white;
   font-size: 18px;
   border: none;
   padding: 10px 20px;
+  margin-right:16px ;
   border-radius: 5px;
   cursor: pointer;
   font-weight: bold;
@@ -82,4 +84,9 @@ button:hover {
   text-align: center;
   align-items: center;
   justify-content: center;
+}
+.nav-right{
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
 }
