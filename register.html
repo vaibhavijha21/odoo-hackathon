@@ -20,32 +20,34 @@
     <h1 class="text-3xl font-bold text-center text-green-700 mb-2">🌱 CivicTrack</h1>
     <p class="text-center text-gray-700 text-lg mb-6">Create your account</p>
 
-    <form class="space-y-5">
+    <form id="registerForm" class="space-y-5">
       <div>
         <label class="block text-gray-700 font-medium mb-1">User Name</label>
-        <input type="text"  id="usernameField" placeholder="Enter your name"
+        <input id="username" type="text" placeholder="Enter your name" required
           class="w-full border border-gray-300 p-2 rounded-xl focus:ring-2 focus:ring-green-400 focus:outline-none" />
       </div>
 
       <div>
         <label class="block text-gray-700 font-medium mb-1">Email</label>
-        <input type="email" placeholder="you@example.com"
+        <input id="email" type="email" placeholder="you@example.com" required
           class="w-full border border-gray-300 p-2 rounded-xl focus:ring-2 focus:ring-green-400 focus:outline-none" />
       </div>
 
       <div>
         <label class="block text-gray-700 font-medium mb-1">Phone</label>
-        <input type="tel" placeholder="Enter phone number"
+        <input id="phone" type="tel" placeholder="Enter phone number" required
           class="w-full border border-gray-300 p-2 rounded-xl focus:ring-2 focus:ring-green-400 focus:outline-none" />
       </div>
 
       <div>
         <label class="block text-gray-700 font-medium mb-1">Password</label>
-        <input type="password" placeholder="Enter password"
+        <input id="password" type="password" placeholder="Enter password" required
           class="w-full border border-gray-300 p-2 rounded-xl focus:ring-2 focus:ring-green-400 focus:outline-none" />
       </div>
 
-      <button type="button" id="registerBtn" onclick="window.location.href='complaint.html'"
+      <p id="errorMsg" class="text-sm text-red-600 text-center font-semibold"></p>
+
+      <button type="submit"
         class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-xl transition duration-300 hover:scale-105">
         🚀 Register
       </button>
@@ -57,27 +59,45 @@
     </p>
 
     <div class="mt-4 text-center">
-      <a href="#" class="text-sm text-gray-500 hover:text-green-600 transition">⬅ Back to Home</a>
+      <a href="index.html" class="text-sm text-gray-500 hover:text-green-600 transition">⬅ Back to Home</a>
     </div>
   </div>
 
-<script>
-  document.getElementById("registerBtn").addEventListener("click", () => {
-    const userName = document.getElementById("usernameField").value.trim();
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
 
-    if (!userName) {
-      alert("Please enter your name.");
-      return;
-    }
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const password = document.getElementById('password').value;
+      const errorMsg = document.getElementById('errorMsg');
 
-    // Save username to localStorage
-    localStorage.setItem("currentUser", userName);
+      const usernameValid = username.length >= 3 && username.length <= 20;
+      const passwordValid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
 
-    // Redirect to Complaint Page
-    window.location.href = "complaint.html";
-  });
-</script>
+      if (!usernameValid) {
+        errorMsg.textContent = "❌ Username must be 3–20 characters long.";
+        return;
+      }
 
+      if (!passwordValid) {
+        errorMsg.textContent = "❌ Password must be 8+ chars, include upper, lower, number & special character.";
+        return;
+      }
+
+      // Save user data to localStorage
+      localStorage.setItem("userData", JSON.stringify({
+        username,
+        email,
+        phone,
+        password
+      }));
+
+      alert("✅ Registered Successfully! You can now login.");
+      window.location.href = "login.html";
+    });
+  </script>
 
 </body>
 </html>
