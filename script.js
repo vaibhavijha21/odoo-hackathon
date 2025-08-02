@@ -62,6 +62,7 @@ const posts = [
   
 
 ];
+
 function getDistance(lat1, lon1, lat2, lon2) {
   const R = 6371; // km
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -76,6 +77,30 @@ function getDistance(lat1, lon1, lat2, lon2) {
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }
+
+// Scroll animation observer
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, observerOptions);
+
+// Add scroll animation to elements
+function addScrollAnimation() {
+  const elements = document.querySelectorAll('.issue-box, .footer-section');
+  elements.forEach(el => {
+    el.classList.add('scroll-animate');
+    observer.observe(el);
+  });
+}
+
 window.onload = () => {
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(pos => {
@@ -105,18 +130,74 @@ function displayPosts(postArray) {
   container.innerHTML = ""; // Clear any old posts
 
   if (postArray.length === 0) {
-    container.innerHTML = "<p>No civic issues reported near you.</p>";
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+        <div style="font-size: 48px; margin-bottom: 20px;">🌍</div>
+        <h2 style="color: #059669; margin-bottom: 10px;">No Issues Nearby</h2>
+        <p style="color: #6b7280; font-size: 18px;">Great! No civic issues have been reported in your area.</p>
+        <button onclick="window.location.href='register.html'" style="margin-top: 20px;">Report an Issue</button>
+      </div>
+    `;
     return;
   }
 
-  postArray.forEach(post => {
+  postArray.forEach((post, index) => {
     const div = document.createElement("div");
     div.className = "issue-box";
     div.innerHTML = `
-      <img src="${post.image}" alt="Issue Image" class="issue-img">
+      <img src="${post.image}" alt="Issue Image" class="issue-img" loading="lazy">
       <h3>${post.title}</h3>
       <p>${post.description}</p>
     `;
+    
+    // Add click event listener
+    div.addEventListener('click', function() {
+      // Remove clicked class from all boxes
+      document.querySelectorAll('.issue-box').forEach(box => {
+        box.classList.remove('clicked');
+      });
+      
+      // Add clicked class to this box
+      this.classList.add('clicked');
+      
+      // Remove the class after animation completes
+      setTimeout(() => {
+        this.classList.remove('clicked');
+      }, 600);
+    });
+    
     container.appendChild(div);
   });
+
+  // Add scroll animations after content is loaded
+  setTimeout(addScrollAnimation, 100);
 }
+
+// Add smooth scrolling for anchor links
+document.addEventListener('DOMContentLoaded', function() {
+  const links = document.querySelectorAll('a[href^="#"]');
+  links.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+});
+
+// Add loading animation for images
+document.addEventListener('DOMContentLoaded', function() {
+  const images = document.querySelectorAll('.issue-img');
+  images.forEach(img => {
+    img.addEventListener('load', function() {
+      this.style.opacity = '1';
+    });
+    img.style.opacity = '0';
+    img.style.transition = 'opacity 0.3s ease';
+  });
+});
