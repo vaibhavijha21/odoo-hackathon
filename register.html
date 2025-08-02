@@ -45,7 +45,7 @@
           class="w-full border border-gray-300 p-2 rounded-xl focus:ring-2 focus:ring-green-400 focus:outline-none" />
       </div>
 
-      <button type="button" onclick="window.location.href='complaint.html'"
+      <button type="button" id="registerBtn" onclick="window.location.href='complaint.html'"
         class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-xl transition duration-300 hover:scale-105">
         🚀 Register
       </button>
@@ -61,6 +61,22 @@
     </div>
   </div>
 
+<script>
+  document.getElementById("registerBtn").addEventListener("click", () => {
+    const userName = document.getElementById("usernameField").value.trim();
+
+    if (!userName) {
+      alert("Please enter your name.");
+      return;
+    }
+
+    // Save username to localStorage
+    localStorage.setItem("currentUser", userName);
+
+    // Redirect to Complaint Page
+    window.location.href = "complaint.html";
+  });
+</script>
 
 
 </body>

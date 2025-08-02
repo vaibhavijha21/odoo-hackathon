@@ -40,6 +40,24 @@
   </div>
 
   <script>
+
+  window.onload = function() {
+    const currentUser = localStorage.getItem("currentUser");
+    if (!currentUser) {
+      alert("Please register or login first.");
+      window.location.href = "register.html";  // Redirect if no user found
+    } else {
+      document.getElementById("usernameInput").value = currentUser;
+      document.getElementById("usernameInput").readOnly = true;  // Prevent Editing
+    }
+
+    displayPosts(); // Existing function to load complaints
+  };
+
+
+
+
+
   let posts = JSON.parse(localStorage.getItem("civicPosts")) || [];
 
   function displayPosts() {
@@ -134,7 +152,7 @@
     reader.readAsDataURL(file);
   });
 
-  window.onload = displayPosts;
+  // window.onload = displayPosts;
 </script>
 
 </body>
