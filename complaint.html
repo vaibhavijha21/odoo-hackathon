@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CivicTrack Complaints</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-green-100 min-h-screen flex items-center justify-center">
+
+  <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-6xl flex flex-col md:flex-row gap-12">
+    <!-- Left Side: Post Form -->
+    <div class="md:w-1/2 space-y-6">
+      <h1 class="text-3xl font-bold text-green-700">📢 Report an Issue</h1>
+      
+      <div>
+        <label class="block text-gray-700 mb-1">User Name</label>
+        <input id="usernameInput" type="text" placeholder="Enter your name" class="w-full border rounded-xl px-4 py-2 outline-none focus:ring focus:ring-green-300" />
+      </div>
+      
+      <div>
+        <label class="block text-gray-700 mb-1">Complaint Description</label>
+        <textarea id="postDesc" placeholder="Describe the issue..." class="w-full border rounded-xl px-4 py-2 h-24 outline-none focus:ring focus:ring-green-300"></textarea>
+      </div>
+      
+      <div>
+        <label class="block text-gray-700 mb-1">Upload Image</label>
+        <input type="file" id="imgInput" accept="image/*" class="w-full border rounded-xl px-4 py-2 outline-none focus:ring focus:ring-green-300" />
+      </div>
+
+      <button id="postBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-xl w-full">Post Complaint</button>
+    </div>
+
+    <!-- Right Side: Feed -->
+    <div class="md:w-1/2 bg-gray-50 pl-6 border-l border-gray-300">
+      <h2 class="text-2xl font-bold text-gray-700 mb-4">Nearby Complaints</h2>
+      <div id="postsFeed" class="space-y-4 overflow-y-auto max-h-[500px]">
+        <!-- Posts will appear here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+  let posts = JSON.parse(localStorage.getItem("civicPosts")) || [];
+
+  function displayPosts() {
+    const feed = document.getElementById("postsFeed");
+    feed.innerHTML = "";
+
+    if (posts.length === 0) {
+      feed.innerHTML = "<p class='text-gray-500'>No complaints yet.</p>";
+      return;
+    }
+
+    posts.slice().reverse().forEach(post => {
+      const div = document.createElement("div");
+      div.className = "bg-gray-50 border-l-4 border-green-500 p-4 rounded-xl shadow-sm";
+      div.innerHTML = `
+        <p class="font-semibold">${post.name}</p>
+        <p class="text-gray-600 mb-2">${post.description}</p>
+        ${post.image ? `<img src="${post.image}" class="w-full max-h-40 object-cover rounded-lg mb-2" />` : ''}
+        ${post.lat && post.lng ? `<p class="text-sm text-gray-500">Location: ${post.lat.toFixed(4)}, ${post.lng.toFixed(4)}</p>` : ''}
+      `;
+      feed.appendChild(div);
+    });
+  }
+
+  function getTodayDateStr() {
+    const today = new Date();
+    return today.toISOString().split('T')[0]; // "YYYY-MM-DD"
+  }
+
+  function getUserDailyPostCount(userName) {
+    const dateKey = `postCount_${userName}_${getTodayDateStr()}`;
+    return parseInt(localStorage.getItem(dateKey)) || 0;
+  }
+
+  function incrementUserDailyPostCount(userName) {
+    const dateKey = `postCount_${userName}_${getTodayDateStr()}`;
+    let count = parseInt(localStorage.getItem(dateKey)) || 0;
+    count++;
+    localStorage.setItem(dateKey, count);
+  }
+
+  document.getElementById("postBtn").addEventListener("click", () => {
+    const userName = document.getElementById("usernameInput").value.trim();
+    const desc = document.getElementById("postDesc").value.trim();
+    const imgInput = document.getElementById("imgInput");
+    const file = imgInput.files[0];
+
+    if (!userName || !desc) {
+      alert("Please enter both name and description.");
+      return;
+    }
+
+    const userCount = getUserDailyPostCount(userName);
+    if (userCount >= 5) {
+      alert(`User "${userName}" has reached the limit of 5 complaints for today.`);
+      return;
+    }
+
+    if (!file) {
+      alert("Please upload an image.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = function () {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const newPost = {
+          name: userName,
+          description: desc,
+          image: reader.result,
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          createdAt: new Date().toISOString()
+        };
+
+        posts.push(newPost);
+        localStorage.setItem("civicPosts", JSON.stringify(posts));
+
+        incrementUserDailyPostCount(userName);  // Increment count for this user
+
+        // Clear Inputs
+        document.getElementById("usernameInput").value = "";
+        document.getElementById("postDesc").value = "";
+        document.getElementById("imgInput").value = "";
+
+        displayPosts();
+      }, (err) => {
+        alert("Unable to get location. Please allow location access.");
+      });
+    };
+
+    reader.readAsDataURL(file);
+  });
+
+  window.onload = displayPosts;
+</script>
+
+</body>
+</html>
