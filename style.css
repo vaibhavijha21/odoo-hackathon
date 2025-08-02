@@ -1,0 +1,12 @@
+nav {
+  background: #333;
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+.issue-box {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 8px;
+}
