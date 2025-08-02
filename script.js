@@ -4,6 +4,7 @@ const posts = [
     title: "Pothole near Phase 7",
     description: "Huge pothole on main road",
     lat: 30.7046, // Mohali
+    image:"garbage1.jpg",
     lng: 76.7179
   },
   {
@@ -11,7 +12,41 @@ const posts = [
     description: "Bin not cleared for 3 days",
     lat: 30.3752, // Ambala
     lng: 76.7821
-  }
+  },
+  {
+    title: "Pothole near Phase 7",
+    description: "Huge pothole on main road",
+    lat: 30.7046, // Mohali
+    image:"waterlogged.avif",
+    lng: 76.7179
+  },{
+    title: "Pothole near Phase 7",
+    description: "Huge pothole on main road",
+    image:"pothole.jpg",
+    lat: 30.7046, // Mohali
+    lng: 76.7179
+  },{
+    title: "Garbage dumped near house 47",
+    description: "Somebody threw a pile of junk near my house in phase 4",
+    lat: 30.7046, // Mohali
+    image:"yay.avif",
+    lng: 76.7179
+  },{
+   title: "Garbage dumped near house 47",
+    description: "Somebody threw a pile of junk near my house in phase 4",
+    lat: 30.7046, // Mohali
+    image:"yay.avif",
+    lng: 76.7179
+  },
+  {
+   title: "Garbage dumped near house 47",
+    description: "Somebody threw a pile of junk near my house in phase 4",
+    lat: 30.7046, // Mohali
+    image:"yay.avif",
+    lng: 76.7179
+  },
+  
+
 ];
 function getDistance(lat1, lon1, lat2, lon2) {
   const R = 6371; // km
@@ -64,6 +99,7 @@ function displayPosts(postArray) {
     const div = document.createElement("div");
     div.className = "issue-box";
     div.innerHTML = `
+      <img src="${post.image}" alt="Issue Image" class="issue-img">
       <h3>${post.title}</h3>
       <p>${post.description}</p>
     `;
